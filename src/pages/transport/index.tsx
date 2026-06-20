@@ -174,12 +174,27 @@ const TransportPage = () => {
             {inspectionSubmitted && inspectionRecord && (
               <View className={styles.infoRow}>
                 <Text className={styles.infoLabel}>客服处理</Text>
-                <Text
-                  className={styles.infoValue}
-                  style={{ color: serviceStatusColor[inspectionRecord.serviceStatus] }}
-                >
-                  {serviceStatusLabel[inspectionRecord.serviceStatus]}
-                </Text>
+                <View>
+                  <Text
+                    className={styles.infoValue}
+                    style={{ color: serviceStatusColor[inspectionRecord.serviceStatus] }}
+                  >
+                    {serviceStatusLabel[inspectionRecord.serviceStatus]}
+                  </Text>
+                  {inspectionRecord.serviceStatus === 'exchanged' && inspectionRecord.serviceTimeline.length > 0 && (
+                    (() => {
+                      const lastEntry = inspectionRecord.serviceTimeline[inspectionRecord.serviceTimeline.length - 1]
+                      if (lastEntry.expectedDate) {
+                        return (
+                          <Text className={styles.expectedDateHint}>
+                            （预计{lastEntry.expectedDate}补发）
+                          </Text>
+                        )
+                      }
+                      return null
+                    })()
+                  )}
+                </View>
               </View>
             )}
           </View>

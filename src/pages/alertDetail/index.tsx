@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { View, Text, ScrollView } from '@tarojs/components'
 import Taro, { useRouter } from '@tarojs/taro'
 import { useAppStore } from '@/store'
 import { AlertLevel, RiskAction, RiskActionConfig, DispositionRecord } from '@/types/order'
 import classnames from 'classnames'
+import dayjs from 'dayjs'
 import styles from './index.module.scss'
 
 const levelHeaderMap: Record<AlertLevel, { label: string; styleKey: string }> = {
@@ -90,6 +91,11 @@ const AlertDetailPage = () => {
 
   const recommendedActions = formatRecommendedActions()
 
+  const sortedDispositionRecords = useMemo(() => {
+    if (!alert.dispositionRecords) return []
+    return [...alert.dispositionRecords].sort((a, b) => a.time.localeCompare(b.time))
+  }, [alert.dispositionRecords])
+
   const handleOpenTransport = () => {
     Taro.navigateTo({ url: `/pages/transport/index?id=${alert.orderId}` })
   }
@@ -111,13 +117,7 @@ const AlertDetailPage = () => {
             type: 'remark',
             content: res.content,
             operator: '当前用户',
-            time: new Date().toLocaleString('zh-CN', {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-              hour: '2-digit',
-              minute: '2-digit'
-            }).replace(/\//g, '-')
+            time: dayjs().format('YYYY-MM-DD HH:mm')
           })
         }
       }
@@ -240,9 +240,9 @@ const AlertDetailPage = () => {
 
           <View className={styles.dispositionSection}>
             <Text className={styles.dispositionTitle}>处置记录</Text>
-            {alert.dispositionRecords && alert.dispositionRecords.length > 0 ? (
+            {sortedDispositionRecords.length > 0 ? (
               <View className={styles.timeline}>
-                {alert.dispositionRecords.map(record => (
+                {sortedDispositionRecords.map(record => (
                   <View key={record.id} className={styles.timelineItem}>
                     <View className={styles.timelineDot} />
                     <View className={styles.timelineContent}>

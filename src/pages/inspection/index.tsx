@@ -50,6 +50,9 @@ const InspectionPage = () => {
   const [overallRemark, setOverallRemark] = useState('')
   const [showSuccess, setShowSuccess] = useState(false)
   const [existingRecord, setExistingRecord] = useState<InspectionRecord | null>(null)
+  const [showExchangeModal, setShowExchangeModal] = useState(false)
+  const [exchangeExpectedDate, setExchangeExpectedDate] = useState('')
+  const [exchangeRemark, setExchangeRemark] = useState('')
 
   const alerts = useAppStore(state => state.alerts)
   const getInspectionRecord = useAppStore(state => state.getInspectionRecord)
@@ -195,14 +198,34 @@ const InspectionPage = () => {
     rejected: '已拒收'
   }
 
-  const handleUpdateStatus = (status: ServiceStatus, remark: string) => {
+  const handleUpdateStatus = (status: ServiceStatus, remark: string, expectedDate?: string) => {
     if (!orderId) return
-    updateServiceStatus(orderId, status, remark)
+    updateServiceStatus(orderId, status, remark, expectedDate)
     const record = getInspectionRecord(orderId)
     if (record) {
       setExistingRecord(record)
     }
     Taro.showToast({ title: `状态已更新为${serviceStatusLabel[status]}`, icon: 'none' })
+  }
+
+  const handleOpenExchangeModal = () => {
+    const defaultDate = dayjs().add(1, 'day').format('YYYY-MM-DD')
+    setExchangeExpectedDate(defaultDate)
+    setExchangeRemark('')
+    setShowExchangeModal(true)
+  }
+
+  const handleConfirmExchange = () => {
+    if (!exchangeExpectedDate) {
+      Taro.showToast({ title: '请填写预计补发时间', icon: 'none' })
+      return
+    }
+    if (!exchangeRemark.trim()) {
+      Taro.showToast({ title: '请填写处理备注', icon: 'none' })
+      return
+    }
+    handleUpdateStatus('exchanged', exchangeRemark.trim(), exchangeExpectedDate)
+    setShowExchangeModal(false)
   }
 
   const getKeyCheckTip = () => {
@@ -317,6 +340,9 @@ const InspectionPage = () => {
                     {entry.remark && (
                       <Text className={styles.serviceEntryRemark}>{entry.remark}</Text>
                     )}
+                    {entry.expectedDate && (
+                      <Text className={styles.expectedDateInfo}>预计{entry.expectedDate}补发</Text>
+                    )}
                   </View>
                 </View>
               ))}
@@ -330,6 +356,12 @@ const InspectionPage = () => {
                     onClick={() => handleUpdateStatus('confirmed', '确认收货，商品正常入库')}
                   >
                     确认收货
+                  </Text>
+                  <Text
+                    className={classnames(styles.btnService, styles.statusExchanged)}
+                    onClick={handleOpenExchangeModal}
+                  >
+                    换货
                   </Text>
                   <Text
                     className={classnames(styles.btnService, styles.statusRejected)}
@@ -356,6 +388,43 @@ const InspectionPage = () => {
             </View>
           </View>
         </ScrollView>
+
+        {showExchangeModal && (
+          <View className={styles.modalOverlay} onClick={() => setShowExchangeModal(false)}>
+            <View className={styles.modalBox} onClick={e => e.stopPropagation()}>
+              <Text className={styles.modalTitle}>换货处理</Text>
+
+              <View className={styles.modalField}>
+                <Text className={styles.modalLabel}>预计补发时间</Text>
+                <Input
+                  className={styles.modalInput}
+                  placeholder='例如：2024-01-15'
+                  value={exchangeExpectedDate}
+                  onInput={e => setExchangeExpectedDate(e.detail.value)}
+                />
+              </View>
+
+              <View className={styles.modalField}>
+                <Text className={styles.modalLabel}>处理备注</Text>
+                <Textarea
+                  className={styles.modalTextarea}
+                  placeholder='请填写换货原因和具体情况'
+                  value={exchangeRemark}
+                  onInput={e => setExchangeRemark(e.detail.value)}
+                />
+              </View>
+
+              <View className={styles.modalActions}>
+                <Text className={styles.btnCancel} onClick={() => setShowExchangeModal(false)}>
+                  取消
+                </Text>
+                <Text className={styles.btnModalConfirm} onClick={handleConfirmExchange}>
+                  确认提交
+                </Text>
+              </View>
+            </View>
+          </View>
+        )}
       </View>
     )
   }

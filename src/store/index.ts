@@ -18,8 +18,9 @@ interface AppState {
   markAlertAsRead: (alertId: string) => void
   markMessageAsRead: (messageId: string) => void
   hasInspectionRecord: (orderId: string) => boolean
-  updateServiceStatus: (orderId: string, status: ServiceStatus, remark: string) => void
+  updateServiceStatus: (orderId: string, status: ServiceStatus, remark: string, expectedDate?: string) => void
   addDispositionRecord: (alertId: string, record: Omit<DispositionRecord, 'id'>) => void
+  addDispositionRecordToOrder: (orderId: string, record: Omit<DispositionRecord, 'id' | 'alertId'>) => void
 }
 
 const loadInspectionRecords = (): Record<string, InspectionRecord> => {
@@ -119,6 +120,27 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
     set({ inspectionRecords: newRecords })
     saveInspectionRecords(newRecords)
+
+    const now = dayjs().format('YYYY-MM-DD HH:mm')
+    get().addDispositionRecordToOrder(record.orderId, {
+      orderId: record.orderId,
+      type: 'inspection',
+      content: `检查单已提交：${record.passCount}项合格，${record.failCount}项不合格${record.overallRemark ? `，${record.overallRemark}` : ''}`,
+      operator: record.submitter,
+      time: now
+    })
+
+    record.items.forEach(item => {
+      if (item.result === 'fail' && item.remark) {
+        get().addDispositionRecordToOrder(record.orderId, {
+          orderId: record.orderId,
+          type: 'spotCheck',
+          content: `【${item.label}】不合格：${item.remark}`,
+          operator: record.submitter,
+          time: now
+        })
+      }
+    })
   },
 
   getInspectionRecord: (orderId) => {
@@ -154,15 +176,19 @@ export const useAppStore = create<AppState>((set, get) => ({
     saveMessages(newMessages)
   },
 
-  updateServiceStatus: (orderId, status, remark) => {
+  updateServiceStatus: (orderId, status, remark, expectedDate) => {
     const record = get().inspectionRecords[orderId]
     if (!record) return
 
+    const now = dayjs().format('YYYY-MM-DD HH:mm')
+    const operator = status === 'confirmed' ? '客服' : '收货员'
+
     const newEntry: ServiceTimelineEntry = {
       status,
-      time: dayjs().format('YYYY-MM-DD HH:mm'),
-      operator: status === 'confirmed' ? '客服' : '收货员',
-      remark
+      time: now,
+      operator,
+      remark,
+      expectedDate
     }
 
     const updatedRecord: InspectionRecord = {
@@ -185,18 +211,31 @@ export const useAppStore = create<AppState>((set, get) => ({
       rejected: '已拒收'
     }
 
+    const expectedText = expectedDate ? `，预计${expectedDate}补发` : ''
     const newMessage: MessageItem = {
       id: `msg_svc_${Date.now()}`,
       type: 'system',
       title: '客服处理更新',
-      content: `订单${record.orderNo}处理状态更新为「${statusLabels[status]}」，${remark}`,
-      time: dayjs().format('YYYY-MM-DD HH:mm'),
+      content: `订单${record.orderNo}处理状态更新为「${statusLabels[status]}」，${remark}${expectedText}`,
+      time: now,
       isRead: false,
       orderId
     }
     const newMessages = [newMessage, ...get().messages]
     set({ messages: newMessages })
     saveMessages(newMessages)
+
+    const statusChangeText = expectedDate
+      ? `状态变更为${statusLabels[status]}：${remark}，预计${expectedDate}补发`
+      : `状态变更为${statusLabels[status]}：${remark}`
+
+    get().addDispositionRecordToOrder(orderId, {
+      orderId,
+      type: 'statusChange',
+      content: statusChangeText,
+      operator,
+      time: now
+    })
   },
 
   addDispositionRecord: (alertId, record) => {
@@ -209,6 +248,24 @@ export const useAppStore = create<AppState>((set, get) => ({
         ? { ...a, dispositionRecords: [...a.dispositionRecords, newRecord] }
         : a
     )
+    set({ alerts: newAlerts })
+    saveAlerts(newAlerts)
+  },
+
+  addDispositionRecordToOrder: (orderId, record) => {
+    const orderAlerts = get().alerts.filter(a => a.orderId === orderId)
+    if (orderAlerts.length === 0) return
+
+    const now = dayjs().format('YYYY-MM-DD HH:mm')
+    const newAlerts = get().alerts.map(a => {
+      if (a.orderId !== orderId) return a
+      const newRecord: DispositionRecord = {
+        ...record,
+        alertId: a.id,
+        id: `disp_${Date.now()}_${a.id}`
+      }
+      return { ...a, dispositionRecords: [...a.dispositionRecords, newRecord] }
+    })
     set({ alerts: newAlerts })
     saveAlerts(newAlerts)
   }

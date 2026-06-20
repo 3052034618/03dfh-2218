@@ -244,6 +244,12 @@
   font-weight: $font-weight-medium;
 }
 
+.expectedDateHint {
+  font-size: $font-size-xs;
+  color: #165DFF;
+  margin-left: $spacing-xs;
+}
+
 .chartSection {
   margin-bottom: $spacing-md;
 }

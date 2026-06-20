@@ -4,11 +4,10 @@ import Taro from '@tarojs/taro'
 import classnames from 'classnames'
 import { useAppStore } from '@/store'
 import { mockOrders } from '@/data/orders'
+import { MessageItem } from '@/types/order'
 import styles from './index.module.scss'
 
 type MsgFilter = 'all' | 'arrival' | 'alert' | 'system'
-
-const typeOrder: Record<string, number> = { alert: 0, arrival: 1, system: 2 }
 
 const typeConfig: Record<string, { icon: string; label: string; color: string }> = {
   alert: { icon: '⚠️', label: '预警', color: 'alert' },
@@ -21,7 +20,7 @@ interface OrderGroup {
   orderId: string | null
   orderNo: string
   productName: string
-  messages: typeof mockMessages
+  messages: MessageItem[]
   latestTime: string
   unreadCount: number
 }
@@ -41,7 +40,7 @@ const MessagesPage = () => {
   }, [])
 
   const groups = useMemo<OrderGroup[]>(() => {
-    const groupMap = new Map<string, typeof mockMessages>()
+    const groupMap = new Map<string, MessageItem[]>()
 
     messages.forEach(msg => {
       const key = msg.orderId || '__system__'
@@ -52,11 +51,7 @@ const MessagesPage = () => {
     const result: OrderGroup[] = []
 
     groupMap.forEach((msgs, key) => {
-      const sorted = [...msgs].sort((a, b) => {
-        const typeDiff = (typeOrder[a.type] ?? 9) - (typeOrder[b.type] ?? 9)
-        if (typeDiff !== 0) return typeDiff
-        return b.time.localeCompare(a.time)
-      })
+      const sorted = [...msgs].sort((a, b) => a.time.localeCompare(b.time))
 
       const orderId = key === '__system__' ? null : key
       const orderInfo = orderId ? orderMap[orderId] : null
@@ -101,7 +96,7 @@ const MessagesPage = () => {
     }
   }
 
-  const handleMessageClick = (msg: typeof messages[0], e: any) => {
+  const handleMessageClick = (msg: MessageItem, e: React.MouseEvent) => {
     e.stopPropagation()
     if (!msg.isRead) markMessageAsRead(msg.id)
 
@@ -117,22 +112,27 @@ const MessagesPage = () => {
       Taro.navigateTo({ url: `/pages/inspection/index?id=${msg.orderId}` })
       return
     }
+    if (msg.type === 'system' && msg.title === '客服处理更新' && msg.orderId) {
+      Taro.navigateTo({ url: `/pages/inspection/index?id=${msg.orderId}` })
+      return
+    }
     if (msg.orderId) {
       Taro.navigateTo({ url: `/pages/transport/index?id=${msg.orderId}` })
     }
   }
 
-  const handleGroupNavigate = (group: OrderGroup, e: any) => {
+  const handleGroupNavigate = (group: OrderGroup, e: React.MouseEvent) => {
     e.stopPropagation()
     if (group.orderId) {
       Taro.navigateTo({ url: `/pages/transport/index?id=${group.orderId}` })
     }
   }
 
-  const getActionText = (msg: typeof messages[0]) => {
+  const getActionText = (msg: MessageItem) => {
     if (msg.type === 'arrival') return '打开检查单'
     if (msg.type === 'alert') return '查看预警'
     if (msg.type === 'system' && msg.title === '检查单已提交') return '查看详情'
+    if (msg.type === 'system' && msg.title === '客服处理更新') return '查看处理'
     return '查看详情'
   }
 

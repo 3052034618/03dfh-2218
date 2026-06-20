@@ -11,6 +11,7 @@ export interface ServiceTimelineEntry {
   time: string
   operator: string
   remark: string
+  expectedDate?: string
 }
 
 export interface DispositionRecord {
