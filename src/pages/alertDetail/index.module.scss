@@ -35,6 +35,13 @@
   line-height: $line-height-normal;
 }
 
+.levelExplain {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: $spacing-sm;
+  line-height: $line-height-normal;
+}
+
 .contentArea {
   padding: 0 $page-padding;
   margin-top: $spacing-md;
@@ -108,6 +115,133 @@
   line-height: $line-height-loose;
 }
 
+.riskExplainCard {
+  background-color: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+}
+
+.riskExplainContent {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  line-height: $line-height-loose;
+}
+
+.thresholdCard {
+  background-color: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+}
+
+.thresholdItem {
+  padding: $spacing-sm 0;
+  border-bottom: 1rpx solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.thresholdLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  margin-bottom: 4rpx;
+}
+
+.thresholdValue {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-normal;
+}
+
+.actionSection {
+  margin-bottom: $spacing-md;
+}
+
+.actionTitle {
+  font-size: $font-size-lg;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $spacing-md;
+}
+
+.actionCard {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  background-color: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-sm;
+  border-left: 6rpx solid transparent;
+}
+
+.actionSpotCheck {
+  border-left-color: #165DFF;
+}
+
+.actionExchange {
+  border-left-color: #FF7D00;
+}
+
+.actionReject {
+  border-left-color: #F53F3F;
+}
+
+.actionNormal {
+  border-left-color: #00B42A;
+}
+
+.actionIcon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  flex-shrink: 0;
+}
+
+.iconSpotCheck {
+  background-color: rgba(22, 93, 255, 0.1);
+}
+
+.iconExchange {
+  background-color: rgba(255, 125, 0, 0.1);
+}
+
+.iconReject {
+  background-color: rgba(245, 63, 63, 0.1);
+}
+
+.iconNormal {
+  background-color: rgba(0, 180, 42, 0.1);
+}
+
+.actionContent {
+  flex: 1;
+}
+
+.actionName {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+  margin-bottom: 4rpx;
+}
+
+.actionDesc {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-normal;
+}
+
 .bottomBar {
   position: fixed;
   bottom: 0;
@@ -154,4 +288,28 @@
     opacity: 0.9;
     transform: scale(0.98);
   }
+}
+
+.highlightTag {
+  display: inline-block;
+  padding: 2rpx 12rpx;
+  border-radius: $radius-xs;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  margin-right: $spacing-xs;
+}
+
+.tagTemp {
+  background-color: rgba(15, 198, 194, 0.1);
+  color: $color-primary;
+}
+
+.tagTime {
+  background-color: rgba(22, 93, 255, 0.1);
+  color: $color-info;
+}
+
+.tagRisk {
+  background-color: rgba(245, 63, 63, 0.1);
+  color: $color-error;
 }

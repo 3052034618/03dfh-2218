@@ -130,6 +130,24 @@
   @include text-ellipsis-multi(2);
 }
 
+.messageFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: $spacing-sm;
+}
+
+.messageDate {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.actionText {
+  font-size: $font-size-sm;
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+}
+
 .unreadDot {
   width: 16rpx;
   height: 16rpx;

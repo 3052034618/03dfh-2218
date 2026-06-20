@@ -1,4 +1,34 @@
-import { OrderItem, AlertItem, MessageItem } from '@/types/order'
+import { OrderItem, AlertItem, MessageItem, TempRecord } from '@/types/order'
+
+function generateTempRecords(
+  baseTemp: number,
+  min: number,
+  max: number,
+  hasAlert: boolean,
+  alertLevel: 'normal' | 'warning' | 'severe',
+  duration: number,
+  points: number = 12
+): TempRecord[] {
+  const records: TempRecord[] = []
+  const startHour = 4
+  for (let i = 0; i < points; i++) {
+    const hour = Math.floor(startHour + i * 0.5)
+    const minute = (i % 2) * 30
+    const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
+
+    let temp = baseTemp + (Math.random() - 0.5) * 1.5
+    if (hasAlert && i >= Math.floor(points * 0.4) && i < Math.floor(points * 0.4) + Math.ceil(duration / 30)) {
+      if (alertLevel === 'severe') {
+        temp = max + 4 + Math.random() * 3
+      } else if (alertLevel === 'warning') {
+        temp = max + 1 + Math.random() * 2
+      }
+    }
+    temp = Math.round(temp * 10) / 10
+    records.push({ time: timeStr, temp })
+  }
+  return records
+}
 
 export const mockOrders: OrderItem[] = [
   {
@@ -17,7 +47,10 @@ export const mockOrders: OrderItem[] = [
     destination: '广州白云仓',
     hasAlert: true,
     alertCount: 1,
-    thumbnail: 'https://picsum.photos/id/292/200/200'
+    thumbnail: 'https://picsum.photos/id/292/200/200',
+    progress: 65,
+    currentLocation: '京港澳高速 韶关服务区附近',
+    tempRecords: generateTempRecords(2.5, 0, 4, true, 'warning', 15)
   },
   {
     id: '2',
@@ -35,7 +68,10 @@ export const mockOrders: OrderItem[] = [
     destination: '广州黄埔仓',
     hasAlert: false,
     alertCount: 0,
-    thumbnail: 'https://picsum.photos/id/312/200/200'
+    thumbnail: 'https://picsum.photos/id/312/200/200',
+    progress: 78,
+    currentLocation: '广深沿江高速 东莞麻涌段',
+    tempRecords: generateTempRecords(-16.5, -18, -15, false, 'normal', 0)
   },
   {
     id: '3',
@@ -53,7 +89,10 @@ export const mockOrders: OrderItem[] = [
     destination: '北京大兴仓',
     hasAlert: true,
     alertCount: 2,
-    thumbnail: 'https://picsum.photos/id/326/200/200'
+    thumbnail: 'https://picsum.photos/id/326/200/200',
+    progress: 92,
+    currentLocation: '京藏高速 张家口服务区（已到仓待卸货）',
+    tempRecords: generateTempRecords(1.0, -2, 2, true, 'severe', 60)
   },
   {
     id: '4',
@@ -71,7 +110,10 @@ export const mockOrders: OrderItem[] = [
     destination: '杭州余杭仓',
     hasAlert: false,
     alertCount: 0,
-    thumbnail: 'https://picsum.photos/id/401/200/200'
+    thumbnail: 'https://picsum.photos/id/401/200/200',
+    progress: 100,
+    currentLocation: '杭州余杭仓（已完成）',
+    tempRecords: generateTempRecords(1.0, -1, 2, false, 'normal', 0)
   },
   {
     id: '5',
@@ -89,7 +131,10 @@ export const mockOrders: OrderItem[] = [
     destination: '南宁江南仓',
     hasAlert: false,
     alertCount: 0,
-    thumbnail: 'https://picsum.photos/id/431/200/200'
+    thumbnail: 'https://picsum.photos/id/431/200/200',
+    progress: 32,
+    currentLocation: '南友高速 崇左段',
+    tempRecords: generateTempRecords(15.5, 13, 18, false, 'normal', 0)
   },
   {
     id: '6',
@@ -107,7 +152,10 @@ export const mockOrders: OrderItem[] = [
     destination: '沈阳浑南仓',
     hasAlert: false,
     alertCount: 0,
-    thumbnail: 'https://picsum.photos/id/570/200/200'
+    thumbnail: 'https://picsum.photos/id/570/200/200',
+    progress: 100,
+    currentLocation: '沈阳浑南仓（已完成）',
+    tempRecords: generateTempRecords(2.0, 0, 4, false, 'normal', 0)
   },
   {
     id: '7',
@@ -125,7 +173,10 @@ export const mockOrders: OrderItem[] = [
     destination: '佛山禅城仓',
     hasAlert: true,
     alertCount: 1,
-    thumbnail: 'https://picsum.photos/id/580/200/200'
+    thumbnail: 'https://picsum.photos/id/580/200/200',
+    progress: 85,
+    currentLocation: '广州绕城高速 顺德段',
+    tempRecords: generateTempRecords(-15.0, -18, -12, true, 'warning', 30)
   },
   {
     id: '8',
@@ -143,7 +194,10 @@ export const mockOrders: OrderItem[] = [
     destination: '济南历城仓',
     hasAlert: false,
     alertCount: 0,
-    thumbnail: 'https://picsum.photos/id/625/200/200'
+    thumbnail: 'https://picsum.photos/id/625/200/200',
+    progress: 100,
+    currentLocation: '济南历城仓（已完成）',
+    tempRecords: generateTempRecords(10.0, 8, 12, false, 'normal', 0)
   },
   {
     id: '9',
@@ -161,7 +215,10 @@ export const mockOrders: OrderItem[] = [
     destination: '昆明官渡仓',
     hasAlert: true,
     alertCount: 1,
-    thumbnail: 'https://picsum.photos/id/835/200/200'
+    thumbnail: 'https://picsum.photos/id/835/200/200',
+    progress: 95,
+    currentLocation: '昆明绕城高速 呈贡段（即将到仓）',
+    tempRecords: generateTempRecords(12.0, 10, 15, true, 'severe', 90)
   },
   {
     id: '10',
@@ -179,7 +236,10 @@ export const mockOrders: OrderItem[] = [
     destination: '福州仓山仓',
     hasAlert: false,
     alertCount: 0,
-    thumbnail: 'https://picsum.photos/id/1080/200/200'
+    thumbnail: 'https://picsum.photos/id/1080/200/200',
+    progress: 100,
+    currentLocation: '福州仓山仓（已完成）',
+    tempRecords: generateTempRecords(-20.0, -22, -18, false, 'normal', 0)
   }
 ]
 
@@ -191,14 +251,19 @@ export const mockAlerts: AlertItem[] = [
     productName: '云南叶菜混装（油麦菜/生菜/芥兰）',
     level: 'warning',
     tempZone: 'chilled',
+    tempRequireMin: 0,
     tempRequireMax: 4,
     currentTemp: 6.2,
     durationMinutes: 12,
     description: '冷藏厢温已高于4℃持续12分钟',
     suggestion: '建议到仓后重点抽检叶菜外观，查看叶片是否出现水浸状软化',
-    impactAssessment: '叶菜类在4-8℃环境下超过10分钟，品质劣变速率增加约30%，口感和货架期可能受影响',
+    impactAssessment: '叶菜类在4-8℃环境下超过10分钟，品质劣变速率增加约30%，口感和货架期可能受影响。如持续超过30分钟，叶片可能出现不可逆的萎蔫和褐变。',
     time: '2026-06-21 07:23',
-    isRead: false
+    isRead: false,
+    riskLevelDesc: '中等风险：叶菜类轻度回温，短期影响有限但需重点抽检',
+    recommendedActions: ['spotCheck', 'normal'],
+    triggerThreshold: '冷藏温区上限4℃，连续监测5分钟超温即触发预警',
+    tempOffset: '当前温度6.2℃，超出上限2.2℃，偏移幅度55%'
   },
   {
     id: 'a2',
@@ -207,14 +272,19 @@ export const mockAlerts: AlertItem[] = [
     productName: '内蒙古羔羊排冷链直送',
     level: 'severe',
     tempZone: 'chilled',
+    tempRequireMin: -2,
     tempRequireMax: 2,
     currentTemp: 5.8,
     durationMinutes: 45,
     description: '冷藏厢温已高于2℃持续45分钟，已超出安全范围',
     suggestion: '强烈建议拒收或要求车队提供温控记录，到仓后须逐件测温并重点检查色泽和气味',
-    impactAssessment: '羊肉在0-2℃安全区外超过30分钟，细菌繁殖风险显著升高，可能已不适宜正常销售',
+    impactAssessment: '羊肉在0-2℃安全区外超过30分钟，细菌繁殖风险显著升高。45分钟持续5℃以上，表面菌落总数可能已达到临界值，如继续运输可能出现异味和黏液，存在食品安全风险，建议直接拒收。',
     time: '2026-06-21 04:15',
-    isRead: false
+    isRead: false,
+    riskLevelDesc: '高风险：冷鲜肉严重回温，细菌繁殖风险高，食品安全隐患大',
+    recommendedActions: ['reject', 'exchange', 'spotCheck'],
+    triggerThreshold: '冷鲜肉温区上限2℃，连续监测10分钟超温即触发严重预警',
+    tempOffset: '当前温度5.8℃，超出上限3.8℃，偏移幅度190%'
   },
   {
     id: 'a3',
@@ -223,14 +293,19 @@ export const mockAlerts: AlertItem[] = [
     productName: '内蒙古羔羊排冷链直送',
     level: 'warning',
     tempZone: 'chilled',
+    tempRequireMin: -2,
     tempRequireMax: 2,
     currentTemp: 3.5,
     durationMinutes: 8,
     description: '冷藏厢温短时波动至3.5℃，持续8分钟',
     suggestion: '建议到仓后抽查羊排表面是否有异常黏液或色泽变化',
-    impactAssessment: '短时温波对冷链肉品影响有限，但叠加前次严重回温事件，需综合评估',
+    impactAssessment: '短时温波对冷链肉品影响有限，8分钟超温不会导致显著品质下降。但叠加前次严重回温事件，累积风险需综合评估，整体仍需警惕。',
     time: '2026-06-21 03:50',
-    isRead: true
+    isRead: true,
+    riskLevelDesc: '低风险：短时温波，单独影响有限，需结合其他事件综合判断',
+    recommendedActions: ['spotCheck'],
+    triggerThreshold: '冷鲜肉温区上限2℃，连续监测3分钟超温即触发注意预警',
+    tempOffset: '当时温度3.5℃，超出上限1.5℃，偏移幅度75%'
   },
   {
     id: 'a4',
@@ -239,14 +314,19 @@ export const mockAlerts: AlertItem[] = [
     productName: '澳洲M9和牛西冷真空包',
     level: 'warning',
     tempZone: 'frozen',
+    tempRequireMin: -18,
     tempRequireMax: -12,
     currentTemp: -14.0,
     durationMinutes: 25,
     description: '冷冻厢温已高于-18℃持续25分钟，目前-14℃',
     suggestion: '建议到仓后检查真空包装是否有冰晶析出或袋内结霜，若有建议解冻后优先使用',
-    impactAssessment: '和牛在-18℃以上缓慢升温虽未完全解冻，但冰晶重组可能影响肉质纹理和口感',
+    impactAssessment: '和牛在-18℃以上缓慢升温虽未完全解冻，但冰晶重组可能影响肉质纹理和口感。25分钟处于-14℃，表面可能开始出现轻微软化，内部仍处于冻结状态，品质影响中等。',
     time: '2026-06-21 06:40',
-    isRead: false
+    isRead: false,
+    riskLevelDesc: '中等风险：冷冻品低温回温，未完全解冻但可能影响肉质',
+    recommendedActions: ['spotCheck', 'normal'],
+    triggerThreshold: '冷冻温区安全线-18℃，连续监测15分钟高于此值即触发预警',
+    tempOffset: '当前温度-14℃，高于安全线4℃，偏移幅度22%（相对于冷冻温差范围）'
   },
   {
     id: 'a5',
@@ -255,14 +335,19 @@ export const mockAlerts: AlertItem[] = [
     productName: '越南火龙果红肉10kg箱',
     level: 'severe',
     tempZone: 'ambient',
+    tempRequireMin: 10,
     tempRequireMax: 15,
     currentTemp: 22.0,
     durationMinutes: 60,
     description: '厢温已高于15℃持续60分钟，当前22℃',
     suggestion: '建议拒收或要求换货，火龙果在高温下极易发酵变质，到仓后逐箱检查果皮是否发软',
-    impactAssessment: '火龙果在20℃以上超过30分钟，发酵和霉变风险极高，果肉品质不可逆下降',
+    impactAssessment: '火龙果在20℃以上超过30分钟，发酵和霉变风险极高，果肉品质不可逆下降。60分钟处于22℃环境，果皮可能已出现软化，果肉内部可能已经开始发酵产生酒精味，商品价值大幅下降，建议拒收。',
     time: '2026-06-21 05:10',
-    isRead: false
+    isRead: false,
+    riskLevelDesc: '高风险：热带水果高温环境持续过久，发酵霉变风险极大',
+    recommendedActions: ['reject', 'exchange'],
+    triggerThreshold: '常温温控上限15℃，连续监测10分钟超温即触发严重预警',
+    tempOffset: '当前温度22℃，超出上限7℃，偏移幅度47%'
   },
   {
     id: 'a6',
@@ -271,14 +356,19 @@ export const mockAlerts: AlertItem[] = [
     productName: '云南叶菜混装（油麦菜/生菜/芥兰）',
     level: 'normal',
     tempZone: 'chilled',
+    tempRequireMin: 0,
     tempRequireMax: 4,
     currentTemp: 3.2,
     durationMinutes: 0,
     description: '厢温已恢复正常范围',
     suggestion: '此前回温影响仍需关注，到仓后建议按原计划重点抽检叶菜外观',
-    impactAssessment: '温度已回归安全区间，但此前12分钟回温对叶菜品质的累积影响仍需到仓验证',
+    impactAssessment: '温度已回归安全区间，但此前12分钟回温对叶菜品质的累积影响仍需到仓验证。整体风险可控，但仍建议按预警计划执行抽检，确保问题批次被拦截。',
     time: '2026-06-21 07:35',
-    isRead: true
+    isRead: true,
+    riskLevelDesc: '风险已解除：温度回归安全区，累积影响仍需到仓验证',
+    recommendedActions: ['spotCheck'],
+    triggerThreshold: '温度回落至温区范围内并稳定5分钟，自动解除预警',
+    tempOffset: '当前温度3.2℃，在0-4℃安全范围内'
   }
 ]
 
@@ -343,7 +433,8 @@ export const mockMessages: MessageItem[] = [
     title: '检查单已提交',
     content: '订单XL20260613006的到货检查单已提交，客服将在24小时内确认',
     time: '2026-06-20 19:20',
-    isRead: true
+    isRead: true,
+    orderId: '6'
   },
   {
     id: 'm8',

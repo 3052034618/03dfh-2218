@@ -21,7 +21,12 @@ export interface OrderItem {
   hasAlert: boolean
   alertCount: number
   thumbnail: string
+  progress: number
+  currentLocation: string
+  tempRecords: TempRecord[]
 }
+
+export type RiskAction = 'spotCheck' | 'exchange' | 'reject' | 'normal'
 
 export interface AlertItem {
   id: string
@@ -30,6 +35,7 @@ export interface AlertItem {
   productName: string
   level: AlertLevel
   tempZone: TempZone
+  tempRequireMin: number
   tempRequireMax: number
   currentTemp: number
   durationMinutes: number
@@ -38,6 +44,18 @@ export interface AlertItem {
   impactAssessment: string
   time: string
   isRead: boolean
+  riskLevelDesc: string
+  recommendedActions: RiskAction[]
+  triggerThreshold: string
+  tempOffset: string
+}
+
+export interface RiskActionConfig {
+  key: RiskAction
+  label: string
+  desc: string
+  icon: string
+  color: string
 }
 
 export interface MessageItem {
@@ -83,6 +101,7 @@ export interface InspectionItem {
   checked: boolean
   result?: 'pass' | 'fail'
   remark?: string
+  isKeyCheck?: boolean
 }
 
 export interface InspectionForm {
@@ -92,4 +111,16 @@ export interface InspectionForm {
   overallRemark: string
   submitTime?: string
   submitted: boolean
+}
+
+export interface InspectionRecord {
+  orderId: string
+  orderNo: string
+  productName: string
+  items: InspectionItem[]
+  overallRemark: string
+  submitTime: string
+  submitter: string
+  failCount: number
+  passCount: number
 }
