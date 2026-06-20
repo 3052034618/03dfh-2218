@@ -2,7 +2,7 @@ import { OrderItem, AlertItem, MessageItem, TempRecord } from '@/types/order'
 
 function generateTempRecords(
   baseTemp: number,
-  min: number,
+  _min: number,
   max: number,
   hasAlert: boolean,
   alertLevel: 'normal' | 'warning' | 'severe',
@@ -56,10 +56,10 @@ export const mockOrders: OrderItem[] = [
     id: '2',
     orderNo: 'XL20260615002',
     productName: '挪威三文鱼整条冰鲜',
-    tempZone: 'frozen',
-    tempRequireMin: -18,
-    tempRequireMax: -15,
-    currentTemp: -16.5,
+    tempZone: 'chilled',
+    tempRequireMin: 0,
+    tempRequireMax: 4,
+    currentTemp: 2.5,
     status: 'transporting',
     vehicleNo: '粤B·冷66234',
     departureTime: '2026-06-21 02:00',
@@ -71,7 +71,7 @@ export const mockOrders: OrderItem[] = [
     thumbnail: 'https://picsum.photos/id/312/200/200',
     progress: 78,
     currentLocation: '广深沿江高速 东莞麻涌段',
-    tempRecords: generateTempRecords(-16.5, -18, -15, false, 'normal', 0)
+    tempRecords: generateTempRecords(2.5, 0, 4, false, 'normal', 0)
   },
   {
     id: '3',
@@ -162,9 +162,9 @@ export const mockOrders: OrderItem[] = [
     orderNo: 'XL20260613007',
     productName: '澳洲M9和牛西冷真空包',
     tempZone: 'frozen',
-    tempRequireMin: -18,
-    tempRequireMax: -12,
-    currentTemp: -14.0,
+    tempRequireMin: -22,
+    tempRequireMax: -18,
+    currentTemp: -10.5,
     status: 'abnormal',
     vehicleNo: '粤A·冷44721',
     departureTime: '2026-06-20 14:00',
@@ -176,7 +176,7 @@ export const mockOrders: OrderItem[] = [
     thumbnail: 'https://picsum.photos/id/580/200/200',
     progress: 85,
     currentLocation: '广州绕城高速 顺德段',
-    tempRecords: generateTempRecords(-15.0, -18, -12, true, 'warning', 30)
+    tempRecords: generateTempRecords(-19.0, -22, -18, true, 'warning', 30)
   },
   {
     id: '8',
@@ -314,19 +314,19 @@ export const mockAlerts: AlertItem[] = [
     productName: '澳洲M9和牛西冷真空包',
     level: 'warning',
     tempZone: 'frozen',
-    tempRequireMin: -18,
-    tempRequireMax: -12,
-    currentTemp: -14.0,
+    tempRequireMin: -22,
+    tempRequireMax: -18,
+    currentTemp: -10.5,
     durationMinutes: 25,
-    description: '冷冻厢温已高于-18℃持续25分钟，目前-14℃',
+    description: '冷冻厢温已高于-18℃持续25分钟，目前-10.5℃',
     suggestion: '建议到仓后检查真空包装是否有冰晶析出或袋内结霜，若有建议解冻后优先使用',
-    impactAssessment: '和牛在-18℃以上缓慢升温虽未完全解冻，但冰晶重组可能影响肉质纹理和口感。25分钟处于-14℃，表面可能开始出现轻微软化，内部仍处于冻结状态，品质影响中等。',
+    impactAssessment: '和牛在-18℃以上缓慢升温虽未完全解冻，但冰晶重组可能影响肉质纹理和口感。25分钟处于-10.5℃，表面可能开始出现轻微软化，内部仍处于冻结状态，品质影响中等。',
     time: '2026-06-21 06:40',
     isRead: false,
     riskLevelDesc: '中等风险：冷冻品低温回温，未完全解冻但可能影响肉质',
     recommendedActions: ['spotCheck', 'normal'],
-    triggerThreshold: '冷冻温区安全线-18℃，连续监测15分钟高于此值即触发预警',
-    tempOffset: '当前温度-14℃，高于安全线4℃，偏移幅度22%（相对于冷冻温差范围）'
+    triggerThreshold: '冷冻温区上限-18℃，连续监测15分钟高于此值即触发预警',
+    tempOffset: '当前温度-10.5℃，超出上限7.5℃，偏移幅度188%（相对于冷冻温差范围）'
   },
   {
     id: 'a5',
@@ -380,7 +380,8 @@ export const mockMessages: MessageItem[] = [
     content: '订单XL20260615001冷藏厢温已高于4℃持续12分钟，请关注运输详情',
     time: '2026-06-21 07:23',
     isRead: false,
-    orderId: '1'
+    orderId: '1',
+    alertId: 'a1'
   },
   {
     id: 'm2',
@@ -389,7 +390,8 @@ export const mockMessages: MessageItem[] = [
     content: '订单XL20260614003厢温已高于2℃持续45分钟，建议拒收或重点检查',
     time: '2026-06-21 04:15',
     isRead: false,
-    orderId: '3'
+    orderId: '3',
+    alertId: 'a2'
   },
   {
     id: 'm3',
@@ -413,10 +415,11 @@ export const mockMessages: MessageItem[] = [
     id: 'm5',
     type: 'alert',
     title: '回温预警',
-    content: '订单XL20260613007冷冻厢温高于-18℃持续25分钟',
+    content: '订单XL20260613007冷冻厢温高于-18℃持续25分钟，目前-10.5℃',
     time: '2026-06-21 06:40',
     isRead: false,
-    orderId: '7'
+    orderId: '7',
+    alertId: 'a4'
   },
   {
     id: 'm6',
@@ -443,21 +446,7 @@ export const mockMessages: MessageItem[] = [
     content: '订单XL20260612009厢温22℃，远超15℃上限已60分钟，建议拒收',
     time: '2026-06-21 05:10',
     isRead: false,
-    orderId: '9'
+    orderId: '9',
+    alertId: 'a5'
   }
-]
-
-export const mockTempRecords = [
-  { time: '04:30', temp: 3.0 },
-  { time: '05:00', temp: 2.8 },
-  { time: '05:30', temp: 3.1 },
-  { time: '06:00', temp: 3.5 },
-  { time: '06:30', temp: 4.8 },
-  { time: '07:00', temp: 5.6 },
-  { time: '07:15', temp: 6.2 },
-  { time: '07:23', temp: 6.2 },
-  { time: '07:30', temp: 5.1 },
-  { time: '07:45', temp: 3.8 },
-  { time: '08:00', temp: 3.2 },
-  { time: '08:15', temp: 3.0 }
 ]

@@ -66,32 +66,12 @@ export interface MessageItem {
   time: string
   isRead: boolean
   orderId?: string
+  alertId?: string
 }
 
 export interface TempRecord {
   time: string
   temp: number
-}
-
-export interface TransportDetail {
-  orderId: string
-  orderNo: string
-  productName: string
-  vehicleNo: string
-  driverName: string
-  driverPhone: string
-  tempZone: TempZone
-  tempRequireMin: number
-  tempRequireMax: number
-  currentTemp: number
-  origin: string
-  destination: string
-  departureTime: string
-  estimatedArrival: string
-  currentLocation: string
-  progress: number
-  tempRecords: TempRecord[]
-  alerts: AlertItem[]
 }
 
 export interface InspectionItem {
@@ -102,15 +82,6 @@ export interface InspectionItem {
   result?: 'pass' | 'fail'
   remark?: string
   isKeyCheck?: boolean
-}
-
-export interface InspectionForm {
-  orderId: string
-  orderNo: string
-  items: InspectionItem[]
-  overallRemark: string
-  submitTime?: string
-  submitted: boolean
 }
 
 export interface InspectionRecord {

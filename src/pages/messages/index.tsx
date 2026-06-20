@@ -16,7 +16,6 @@ const iconMap: Record<string, { icon: string; styleKey: string }> = {
 const MessagesPage = () => {
   const [filter, setFilter] = useState<MsgFilter>('all')
   const messages = useAppStore(state => state.messages)
-  const hasInspectionRecord = useAppStore(state => state.hasInspectionRecord)
 
   const filteredMessages = useMemo(() => {
     if (filter === 'all') return messages
@@ -31,24 +30,24 @@ const MessagesPage = () => {
   ]
 
   const handleMessageClick = (msg: any) => {
-    if (!msg.orderId) return
-
-    if (msg.type === 'arrival') {
-      Taro.navigateTo({ url: `/pages/inspection/index?id=${msg.orderId}` })
-      return
-    }
-
-    if (msg.type === 'system' && msg.title === '检查单已提交') {
-      Taro.navigateTo({ url: `/pages/inspection/index?id=${msg.orderId}` })
-      return
-    }
-
-    if (msg.type === 'alert') {
+    if (msg.type === 'alert' && msg.alertId) {
       Taro.navigateTo({ url: `/pages/alertDetail/index?id=${msg.alertId}` })
       return
     }
 
-    Taro.navigateTo({ url: `/pages/transport/index?id=${msg.orderId}` })
+    if (msg.type === 'arrival' && msg.orderId) {
+      Taro.navigateTo({ url: `/pages/inspection/index?id=${msg.orderId}` })
+      return
+    }
+
+    if (msg.type === 'system' && msg.title === '检查单已提交' && msg.orderId) {
+      Taro.navigateTo({ url: `/pages/inspection/index?id=${msg.orderId}` })
+      return
+    }
+
+    if (msg.orderId) {
+      Taro.navigateTo({ url: `/pages/transport/index?id=${msg.orderId}` })
+    }
   }
 
   const getActionText = (msg: any) => {

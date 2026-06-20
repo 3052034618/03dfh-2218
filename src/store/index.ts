@@ -1,6 +1,11 @@
 import { create } from 'zustand'
-import { InspectionRecord, InspectionItem, MessageItem, AlertItem } from '@/types/order'
+import { InspectionRecord, MessageItem, AlertItem } from '@/types/order'
 import { mockMessages, mockAlerts } from '@/data/orders'
+import Taro from '@tarojs/taro'
+
+const STORAGE_KEY_INSPECTION = 'freshlink_inspection_records'
+const STORAGE_KEY_MESSAGES = 'freshlink_messages'
+const STORAGE_KEY_ALERTS = 'freshlink_alerts'
 
 interface AppState {
   inspectionRecords: Record<string, InspectionRecord>
@@ -14,8 +19,16 @@ interface AppState {
   hasInspectionRecord: (orderId: string) => boolean
 }
 
-export const useAppStore = create<AppState>((set, get) => ({
-  inspectionRecords: {
+const loadInspectionRecords = (): Record<string, InspectionRecord> => {
+  try {
+    const data = Taro.getStorageSync(STORAGE_KEY_INSPECTION)
+    if (data) {
+      return JSON.parse(data)
+    }
+  } catch (e) {
+    console.warn('[AppStore] loadInspectionRecords failed:', e)
+  }
+  return {
     '6': {
       orderId: '6',
       orderNo: 'XL20260613006',
@@ -34,18 +47,70 @@ export const useAppStore = create<AppState>((set, get) => ({
       failCount: 0,
       passCount: 6
     }
-  },
-  messages: mockMessages,
-  alerts: mockAlerts,
+  }
+}
+
+const loadMessages = (): MessageItem[] => {
+  try {
+    const data = Taro.getStorageSync(STORAGE_KEY_MESSAGES)
+    if (data) {
+      return JSON.parse(data)
+    }
+  } catch (e) {
+    console.warn('[AppStore] loadMessages failed:', e)
+  }
+  return mockMessages
+}
+
+const loadAlerts = (): AlertItem[] => {
+  try {
+    const data = Taro.getStorageSync(STORAGE_KEY_ALERTS)
+    if (data) {
+      return JSON.parse(data)
+    }
+  } catch (e) {
+    console.warn('[AppStore] loadAlerts failed:', e)
+  }
+  return mockAlerts
+}
+
+const saveInspectionRecords = (records: Record<string, InspectionRecord>) => {
+  try {
+    Taro.setStorageSync(STORAGE_KEY_INSPECTION, JSON.stringify(records))
+  } catch (e) {
+    console.warn('[AppStore] saveInspectionRecords failed:', e)
+  }
+}
+
+const saveMessages = (messages: MessageItem[]) => {
+  try {
+    Taro.setStorageSync(STORAGE_KEY_MESSAGES, JSON.stringify(messages))
+  } catch (e) {
+    console.warn('[AppStore] saveMessages failed:', e)
+  }
+}
+
+const saveAlerts = (alerts: AlertItem[]) => {
+  try {
+    Taro.setStorageSync(STORAGE_KEY_ALERTS, JSON.stringify(alerts))
+  } catch (e) {
+    console.warn('[AppStore] saveAlerts failed:', e)
+  }
+}
+
+export const useAppStore = create<AppState>((set, get) => ({
+  inspectionRecords: loadInspectionRecords(),
+  messages: loadMessages(),
+  alerts: loadAlerts(),
 
   addInspectionRecord: (record) => {
     console.info('[AppStore] addInspectionRecord:', record.orderNo)
-    set((state) => ({
-      inspectionRecords: {
-        ...state.inspectionRecords,
-        [record.orderId]: record
-      }
-    }))
+    const newRecords = {
+      ...get().inspectionRecords,
+      [record.orderId]: record
+    }
+    set({ inspectionRecords: newRecords })
+    saveInspectionRecords(newRecords)
   },
 
   getInspectionRecord: (orderId) => {
@@ -58,26 +123,26 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   addMessage: (message) => {
     console.info('[AppStore] addMessage:', message.title)
-    set((state) => ({
-      messages: [message, ...state.messages]
-    }))
+    const newMessages = [message, ...get().messages]
+    set({ messages: newMessages })
+    saveMessages(newMessages)
   },
 
   markAlertAsRead: (alertId) => {
     console.info('[AppStore] markAlertAsRead:', alertId)
-    set((state) => ({
-      alerts: state.alerts.map(a =>
-        a.id === alertId ? { ...a, isRead: true } : a
-      )
-    }))
+    const newAlerts = get().alerts.map(a =>
+      a.id === alertId ? { ...a, isRead: true } : a
+    )
+    set({ alerts: newAlerts })
+    saveAlerts(newAlerts)
   },
 
   markMessageAsRead: (messageId) => {
     console.info('[AppStore] markMessageAsRead:', messageId)
-    set((state) => ({
-      messages: state.messages.map(m =>
-        m.id === messageId ? { ...m, isRead: true } : m
-      )
-    }))
+    const newMessages = get().messages.map(m =>
+      m.id === messageId ? { ...m, isRead: true } : m
+    )
+    set({ messages: newMessages })
+    saveMessages(newMessages)
   }
 }))

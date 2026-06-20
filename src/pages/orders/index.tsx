@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import { View, Text, ScrollView } from '@tarojs/components'
 import classnames from 'classnames'
-import { OrderItem, OrderStatus } from '@/types/order'
+import { OrderStatus } from '@/types/order'
 import { mockOrders } from '@/data/orders'
 import OrderCard from '@/components/OrderCard'
 import styles from './index.module.scss'

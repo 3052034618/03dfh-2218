@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react'
 import { View, Text, ScrollView } from '@tarojs/components'
 import classnames from 'classnames'
 import { AlertLevel } from '@/types/order'
-import { mockAlerts } from '@/data/orders'
+import { useAppStore } from '@/store'
 import AlertCard from '@/components/AlertCard'
 import styles from './index.module.scss'
 
@@ -10,18 +10,19 @@ type AlertFilter = 'all' | AlertLevel
 
 const AlertsPage = () => {
   const [filter, setFilter] = useState<AlertFilter>('all')
+  const alerts = useAppStore(state => state.alerts)
 
   const filteredAlerts = useMemo(() => {
-    if (filter === 'all') return mockAlerts
-    return mockAlerts.filter(a => a.level === filter)
-  }, [filter])
+    if (filter === 'all') return alerts
+    return alerts.filter(a => a.level === filter)
+  }, [filter, alerts])
 
   const stats = useMemo(() => {
-    const severe = mockAlerts.filter(a => a.level === 'severe').length
-    const warning = mockAlerts.filter(a => a.level === 'warning').length
-    const normal = mockAlerts.filter(a => a.level === 'normal').length
+    const severe = alerts.filter(a => a.level === 'severe').length
+    const warning = alerts.filter(a => a.level === 'warning').length
+    const normal = alerts.filter(a => a.level === 'normal').length
     return { severe, warning, normal }
-  }, [])
+  }, [alerts])
 
   const filters: { key: AlertFilter; label: string }[] = [
     { key: 'all', label: '全部' },
