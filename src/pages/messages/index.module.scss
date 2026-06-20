@@ -1,0 +1,153 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background-color: $color-bg-page;
+  padding-bottom: 120rpx;
+}
+
+.header {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+  padding: $spacing-lg $page-padding $spacing-xl;
+  padding-top: 24rpx;
+}
+
+.title {
+  font-size: $font-size-xxl;
+  color: $color-text-white;
+  font-weight: $font-weight-bold;
+  margin-bottom: $spacing-xs;
+}
+
+.subtitle {
+  font-size: $font-size-md;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.filterBar {
+  display: flex;
+  padding: $spacing-md $page-padding;
+  gap: $spacing-sm;
+}
+
+.filterBtn {
+  @include button-reset;
+  padding: 8rpx 32rpx;
+  border-radius: $radius-round;
+  font-size: $font-size-sm;
+  background-color: $color-bg-card;
+  color: $color-text-secondary;
+  border: 1rpx solid $color-border;
+  white-space: nowrap;
+  height: 56rpx;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}
+
+.filterBtnActive {
+  background-color: $color-primary;
+  color: $color-text-white;
+  border-color: $color-primary;
+}
+
+.listContainer {
+  padding: 0 $page-padding;
+}
+
+.messageCard {
+  background-color: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+  display: flex;
+  gap: $spacing-md;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.95;
+  }
+}
+
+.messageIcon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 36rpx;
+}
+
+.iconAlert {
+  background-color: rgba(245, 63, 63, 0.1);
+}
+
+.iconArrival {
+  background-color: rgba(15, 198, 194, 0.1);
+}
+
+.iconSystem {
+  background-color: rgba(22, 93, 255, 0.1);
+}
+
+.messageContent {
+  flex: 1;
+  overflow: hidden;
+}
+
+.messageHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-xs;
+}
+
+.messageTitle {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+  @include text-ellipsis;
+  max-width: 400rpx;
+}
+
+.messageTime {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.messageBody {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-normal;
+  @include text-ellipsis-multi(2);
+}
+
+.unreadDot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background-color: $color-error;
+  margin-top: 8rpx;
+  flex-shrink: 0;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+}
+
+.emptyText {
+  font-size: $font-size-md;
+  color: $color-text-tertiary;
+}

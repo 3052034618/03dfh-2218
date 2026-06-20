@@ -1,0 +1,96 @@
+@use '@/styles/variables.scss' as *;
+
+.card {
+  background-color: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.95;
+    transform: scale(0.99);
+  }
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-sm;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.timeText {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.unreadDot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background-color: $color-error;
+}
+
+.productName {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+  @include text-ellipsis-multi(1);
+  margin-bottom: $spacing-xs;
+}
+
+.description {
+  font-size: $font-size-md;
+  color: $color-text-secondary;
+  @include text-ellipsis-multi(2);
+  margin-bottom: $spacing-md;
+}
+
+.suggestionBox {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-xs;
+  background-color: rgba(255, 125, 0, 0.06);
+  border-radius: $radius-sm;
+  padding: $spacing-sm $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+.suggestionIcon {
+  font-size: $font-size-md;
+  flex-shrink: 0;
+  line-height: 1.6;
+}
+
+.suggestionText {
+  font-size: $font-size-sm;
+  color: $color-warning;
+  line-height: $line-height-normal;
+  @include text-ellipsis-multi(2);
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.orderNo {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.viewDetail {
+  font-size: $font-size-sm;
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+}

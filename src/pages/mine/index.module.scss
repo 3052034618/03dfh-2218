@@ -1,0 +1,105 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background-color: $color-bg-page;
+  padding-bottom: 120rpx;
+}
+
+.profileHeader {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-dark 100%);
+  padding: $spacing-xl $page-padding 80rpx;
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+}
+
+.avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: $radius-round;
+  background-color: rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 52rpx;
+  flex-shrink: 0;
+}
+
+.profileInfo {
+  flex: 1;
+  overflow: hidden;
+}
+
+.companyName {
+  font-size: $font-size-xl;
+  color: $color-text-white;
+  font-weight: $font-weight-bold;
+  margin-bottom: $spacing-xs;
+}
+
+.userRole {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.menuSection {
+  padding: 0 $page-padding;
+  margin-top: -40rpx;
+}
+
+.menuCard {
+  background-color: $color-bg-card;
+  border-radius: $radius-md;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+  overflow: hidden;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-lg;
+  border-bottom: 1rpx solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.menuItemLeft {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.menuIcon {
+  font-size: 36rpx;
+  width: 48rpx;
+  text-align: center;
+}
+
+.menuLabel {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+}
+
+.menuArrow {
+  font-size: $font-size-sm;
+  color: $color-text-disabled;
+}
+
+.sectionTitle {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  padding: 0 $page-padding;
+  margin-bottom: $spacing-sm;
+}
+
+.versionText {
+  text-align: center;
+  font-size: $font-size-sm;
+  color: $color-text-disabled;
+  margin-top: $spacing-xl;
+}

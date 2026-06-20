@@ -1,0 +1,111 @@
+@use '@/styles/variables.scss' as *;
+
+.card {
+  background-color: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.95;
+    transform: scale(0.99);
+  }
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.orderNo {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  font-weight: $font-weight-medium;
+}
+
+.cardBody {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.thumbnail {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: $radius-sm;
+  flex-shrink: 0;
+}
+
+.info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  overflow: hidden;
+}
+
+.productName {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+  @include text-ellipsis-multi(1);
+}
+
+.routeInfo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.routeText {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  @include text-ellipsis;
+  max-width: 200rpx;
+}
+
+.arrow {
+  font-size: $font-size-sm;
+  color: $color-text-disabled;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1rpx solid $color-divider;
+}
+
+.footerLeft {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.vehicleText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.timeText {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.alertBadge {
+  background-color: rgba(245, 63, 63, 0.1);
+  padding: 4rpx 16rpx;
+  border-radius: $radius-round;
+}
+
+.alertText {
+  font-size: $font-size-xs;
+  color: $color-error;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+}

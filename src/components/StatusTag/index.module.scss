@@ -1,0 +1,57 @@
+@use '@/styles/variables.scss' as *;
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rpx 16rpx;
+  border-radius: $radius-xs;
+  white-space: nowrap;
+}
+
+.tagText {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+}
+
+.transporting {
+  background-color: rgba(15, 198, 194, 0.1);
+  .tagText {
+    color: $color-primary;
+  }
+}
+
+.completed {
+  background-color: rgba(0, 180, 42, 0.1);
+  .tagText {
+    color: $color-success;
+  }
+}
+
+.abnormal {
+  background-color: rgba(245, 63, 63, 0.1);
+  .tagText {
+    color: $color-error;
+  }
+}
+
+.normal {
+  background-color: rgba(0, 180, 42, 0.1);
+  .tagText {
+    color: $color-success;
+  }
+}
+
+.warning {
+  background-color: rgba(255, 125, 0, 0.1);
+  .tagText {
+    color: $color-warning;
+  }
+}
+
+.severe {
+  background-color: rgba(245, 63, 63, 0.1);
+  .tagText {
+    color: $color-error;
+  }
+}

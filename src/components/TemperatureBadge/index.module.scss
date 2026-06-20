@@ -1,0 +1,60 @@
+@use '@/styles/variables.scss' as *;
+
+.container {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+}
+
+.zoneTag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rpx 12rpx;
+  border-radius: $radius-xs;
+  white-space: nowrap;
+}
+
+.zoneLabel {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+}
+
+.frozen {
+  background-color: rgba(52, 145, 250, 0.1);
+  .zoneLabel {
+    color: $color-temp-frozen;
+  }
+}
+
+.chilled {
+  background-color: rgba(15, 198, 194, 0.1);
+  .zoneLabel {
+    color: $color-temp-chilled;
+  }
+}
+
+.ambient {
+  background-color: rgba(123, 225, 136, 0.15);
+  .zoneLabel {
+    color: #2DA641;
+  }
+}
+
+.rangeText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  white-space: nowrap;
+}
+
+.currentTemp {
+  font-size: $font-size-sm;
+  color: $color-success;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+}
+
+.overTemp {
+  color: $color-error;
+}
