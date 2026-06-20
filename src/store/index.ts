@@ -1,7 +1,8 @@
 import { create } from 'zustand'
-import { InspectionRecord, MessageItem, AlertItem } from '@/types/order'
+import { InspectionRecord, MessageItem, AlertItem, DispositionRecord, ServiceStatus, ServiceTimelineEntry } from '@/types/order'
 import { mockMessages, mockAlerts } from '@/data/orders'
 import Taro from '@tarojs/taro'
+import dayjs from 'dayjs'
 
 const STORAGE_KEY_INSPECTION = 'freshlink_inspection_records'
 const STORAGE_KEY_MESSAGES = 'freshlink_messages'
@@ -17,6 +18,8 @@ interface AppState {
   markAlertAsRead: (alertId: string) => void
   markMessageAsRead: (messageId: string) => void
   hasInspectionRecord: (orderId: string) => boolean
+  updateServiceStatus: (orderId: string, status: ServiceStatus, remark: string) => void
+  addDispositionRecord: (alertId: string, record: Omit<DispositionRecord, 'id'>) => void
 }
 
 const loadInspectionRecords = (): Record<string, InspectionRecord> => {
@@ -45,7 +48,12 @@ const loadInspectionRecords = (): Record<string, InspectionRecord> => {
       submitTime: '2026-06-20 19:20',
       submitter: '李收货员',
       failCount: 0,
-      passCount: 6
+      passCount: 6,
+      serviceStatus: 'confirmed',
+      serviceTimeline: [
+        { status: 'pending', time: '2026-06-20 19:20', operator: '系统', remark: '检查单提交，等待客服确认' },
+        { status: 'confirmed', time: '2026-06-20 20:05', operator: '客服王经理', remark: '检查结果已确认，全部合格，正常入库' }
+      ]
     }
   }
 }
@@ -144,5 +152,64 @@ export const useAppStore = create<AppState>((set, get) => ({
     )
     set({ messages: newMessages })
     saveMessages(newMessages)
+  },
+
+  updateServiceStatus: (orderId, status, remark) => {
+    const record = get().inspectionRecords[orderId]
+    if (!record) return
+
+    const newEntry: ServiceTimelineEntry = {
+      status,
+      time: dayjs().format('YYYY-MM-DD HH:mm'),
+      operator: status === 'confirmed' ? '客服' : '收货员',
+      remark
+    }
+
+    const updatedRecord: InspectionRecord = {
+      ...record,
+      serviceStatus: status,
+      serviceTimeline: [...record.serviceTimeline, newEntry]
+    }
+
+    const newRecords = {
+      ...get().inspectionRecords,
+      [orderId]: updatedRecord
+    }
+    set({ inspectionRecords: newRecords })
+    saveInspectionRecords(newRecords)
+
+    const statusLabels: Record<ServiceStatus, string> = {
+      pending: '待跟进',
+      confirmed: '已确认',
+      exchanged: '已换货',
+      rejected: '已拒收'
+    }
+
+    const newMessage: MessageItem = {
+      id: `msg_svc_${Date.now()}`,
+      type: 'system',
+      title: '客服处理更新',
+      content: `订单${record.orderNo}处理状态更新为「${statusLabels[status]}」，${remark}`,
+      time: dayjs().format('YYYY-MM-DD HH:mm'),
+      isRead: false,
+      orderId
+    }
+    const newMessages = [newMessage, ...get().messages]
+    set({ messages: newMessages })
+    saveMessages(newMessages)
+  },
+
+  addDispositionRecord: (alertId, record) => {
+    const newRecord: DispositionRecord = {
+      ...record,
+      id: `disp_${Date.now()}`
+    }
+    const newAlerts = get().alerts.map(a =>
+      a.id === alertId
+        ? { ...a, dispositionRecords: [...a.dispositionRecords, newRecord] }
+        : a
+    )
+    set({ alerts: newAlerts })
+    saveAlerts(newAlerts)
   }
 }))

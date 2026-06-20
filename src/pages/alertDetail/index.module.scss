@@ -313,3 +313,102 @@
   background-color: rgba(245, 63, 63, 0.1);
   color: $color-error;
 }
+
+.dispositionSection {
+  margin-bottom: $spacing-md;
+  background-color: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.dispositionTitle {
+  font-size: $font-size-lg;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $spacing-md;
+}
+
+.dispositionEmpty {
+  display: block;
+  text-align: center;
+  color: $color-text-tertiary;
+  font-size: $font-size-md;
+  padding: $spacing-xl 0;
+}
+
+.timeline {
+  border-left: 4rpx solid $color-border;
+  margin-left: 12rpx;
+  padding-left: $spacing-lg;
+}
+
+.timelineItem {
+  display: flex;
+  position: relative;
+  padding-bottom: $spacing-lg;
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
+
+.timelineDot {
+  position: absolute;
+  left: -$spacing-lg - 8rpx;
+  top: 8rpx;
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+  background-color: $color-primary;
+  border: 4rpx solid $color-bg-card;
+}
+
+.timelineContent {
+  flex: 1;
+}
+
+.timelineHeader {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-bottom: 4rpx;
+}
+
+.timelineTime {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.timelineOperator {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.timelineBody {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  line-height: $line-height-normal;
+}
+
+.btnAddRemark {
+  @include button-reset;
+  display: block;
+  width: 100%;
+  height: $button-height-lg;
+  border-radius: $radius-button;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  background-color: $color-bg-card;
+  color: $color-text-primary;
+  border: 2rpx dashed $color-border;
+  text-align: center;
+  line-height: $button-height-lg;
+  margin-top: $spacing-lg;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+}

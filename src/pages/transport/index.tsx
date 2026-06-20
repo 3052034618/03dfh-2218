@@ -6,7 +6,7 @@ import { useAppStore } from '@/store'
 import TemperatureBadge from '@/components/TemperatureBadge'
 import StatusTag from '@/components/StatusTag'
 import TempChart from '@/components/TempChart'
-import { AlertLevel } from '@/types/order'
+import { AlertLevel, ServiceStatus } from '@/types/order'
 import styles from './index.module.scss'
 
 const TransportPage = () => {
@@ -14,7 +14,7 @@ const TransportPage = () => {
   const [order, setOrder] = useState(mockOrders[0])
   const [orderAlerts, setOrderAlerts] = useState<any[]>([])
   const alerts = useAppStore(state => state.alerts)
-  const hasInspectionRecord = useAppStore(state => state.hasInspectionRecord)
+  const getInspectionRecord = useAppStore(state => state.getInspectionRecord)
 
   useEffect(() => {
     const id = router.params.id
@@ -32,7 +32,22 @@ const TransportPage = () => {
 
   const isOverTemp = order.currentTemp > order.tempRequireMax
   const hasSevereAlert = orderAlerts.some(a => a.level === 'severe')
-  const inspectionSubmitted = hasInspectionRecord(order.id)
+  const inspectionRecord = getInspectionRecord(order.id)
+  const inspectionSubmitted = !!inspectionRecord
+
+  const serviceStatusLabel: Record<ServiceStatus, string> = {
+    pending: '待跟进',
+    confirmed: '已确认',
+    exchanged: '已换货',
+    rejected: '已拒收'
+  }
+
+  const serviceStatusColor: Record<ServiceStatus, string> = {
+    pending: '#FF7D00',
+    confirmed: '#00B42A',
+    exchanged: '#165DFF',
+    rejected: '#F53F3F'
+  }
 
   const handleOpenInspection = () => {
     Taro.navigateTo({ url: `/pages/inspection/index?id=${order.id}` })
@@ -152,8 +167,19 @@ const TransportPage = () => {
             </View>
             {inspectionSubmitted && (
               <View className={styles.infoRow}>
-                <Text className={styles.infoLabel}>检查单状态</Text>
+                <Text className={styles.infoLabel}>检查单</Text>
                 <Text className={styles.infoValue} style={{ color: '#00B42A' }}>已提交</Text>
+              </View>
+            )}
+            {inspectionSubmitted && inspectionRecord && (
+              <View className={styles.infoRow}>
+                <Text className={styles.infoLabel}>客服处理</Text>
+                <Text
+                  className={styles.infoValue}
+                  style={{ color: serviceStatusColor[inspectionRecord.serviceStatus] }}
+                >
+                  {serviceStatusLabel[inspectionRecord.serviceStatus]}
+                </Text>
               </View>
             )}
           </View>

@@ -263,7 +263,8 @@ export const mockAlerts: AlertItem[] = [
     riskLevelDesc: '中等风险：叶菜类轻度回温，短期影响有限但需重点抽检',
     recommendedActions: ['spotCheck', 'normal'],
     triggerThreshold: '冷藏温区上限4℃，连续监测5分钟超温即触发预警',
-    tempOffset: '当前温度6.2℃，超出上限2.2℃，偏移幅度55%'
+    tempOffset: '当前温度6.2℃，超出上限2.2℃，偏移幅度55%',
+    dispositionRecords: []
   },
   {
     id: 'a2',
@@ -284,7 +285,11 @@ export const mockAlerts: AlertItem[] = [
     riskLevelDesc: '高风险：冷鲜肉严重回温，细菌繁殖风险高，食品安全隐患大',
     recommendedActions: ['reject', 'exchange', 'spotCheck'],
     triggerThreshold: '冷鲜肉温区上限2℃，连续监测10分钟超温即触发严重预警',
-    tempOffset: '当前温度5.8℃，超出上限3.8℃，偏移幅度190%'
+    tempOffset: '当前温度5.8℃，超出上限3.8℃，偏移幅度190%',
+    dispositionRecords: [
+      { id: 'd1', alertId: 'a2', orderId: '3', type: 'spotCheck', content: '抽检羊排表面色泽正常，无异味，中心温度4.2℃', operator: '收货员李明', time: '2026-06-21 06:15' },
+      { id: 'd2', alertId: 'a2', orderId: '3', type: 'statusChange', content: '客服确认处理方案：要求车队提供全程温控记录，本批次优先出库', operator: '客服王经理', time: '2026-06-21 06:45' }
+    ]
   },
   {
     id: 'a3',
@@ -305,7 +310,8 @@ export const mockAlerts: AlertItem[] = [
     riskLevelDesc: '低风险：短时温波，单独影响有限，需结合其他事件综合判断',
     recommendedActions: ['spotCheck'],
     triggerThreshold: '冷鲜肉温区上限2℃，连续监测3分钟超温即触发注意预警',
-    tempOffset: '当时温度3.5℃，超出上限1.5℃，偏移幅度75%'
+    tempOffset: '当时温度3.5℃，超出上限1.5℃，偏移幅度75%',
+    dispositionRecords: []
   },
   {
     id: 'a4',
@@ -326,7 +332,8 @@ export const mockAlerts: AlertItem[] = [
     riskLevelDesc: '中等风险：冷冻品低温回温，未完全解冻但可能影响肉质',
     recommendedActions: ['spotCheck', 'normal'],
     triggerThreshold: '冷冻温区上限-18℃，连续监测15分钟高于此值即触发预警',
-    tempOffset: '当前温度-10.5℃，超出上限7.5℃，偏移幅度188%（相对于冷冻温差范围）'
+    tempOffset: '当前温度-10.5℃，超出上限7.5℃，偏移幅度188%（相对于冷冻温差范围）',
+    dispositionRecords: []
   },
   {
     id: 'a5',
@@ -347,7 +354,11 @@ export const mockAlerts: AlertItem[] = [
     riskLevelDesc: '高风险：热带水果高温环境持续过久，发酵霉变风险极大',
     recommendedActions: ['reject', 'exchange'],
     triggerThreshold: '常温温控上限15℃，连续监测10分钟超温即触发严重预警',
-    tempOffset: '当前温度22℃，超出上限7℃，偏移幅度47%'
+    tempOffset: '当前温度22℃，超出上限7℃，偏移幅度47%',
+    dispositionRecords: [
+      { id: 'd3', alertId: 'a5', orderId: '9', type: 'spotCheck', content: '逐箱检查果皮已软化，3箱果肉有发酵气味', operator: '收货员赵姐', time: '2026-06-21 07:30' },
+      { id: 'd4', alertId: 'a5', orderId: '9', type: 'remark', content: '供应商已确认换货，明日补发新批次', operator: '客服张主管', time: '2026-06-21 08:00' }
+    ]
   },
   {
     id: 'a6',
@@ -368,7 +379,8 @@ export const mockAlerts: AlertItem[] = [
     riskLevelDesc: '风险已解除：温度回归安全区，累积影响仍需到仓验证',
     recommendedActions: ['spotCheck'],
     triggerThreshold: '温度回落至温区范围内并稳定5分钟，自动解除预警',
-    tempOffset: '当前温度3.2℃，在0-4℃安全范围内'
+    tempOffset: '当前温度3.2℃，在0-4℃安全范围内',
+    dispositionRecords: []
   }
 ]
 

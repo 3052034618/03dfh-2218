@@ -3,7 +3,7 @@ import { View, Text, ScrollView, Input, Textarea } from '@tarojs/components'
 import Taro, { useRouter } from '@tarojs/taro'
 import { mockOrders } from '@/data/orders'
 import { useAppStore } from '@/store'
-import { InspectionRecord, InspectionItem } from '@/types/order'
+import { InspectionRecord, InspectionItem, ServiceStatus } from '@/types/order'
 import classnames from 'classnames'
 import dayjs from 'dayjs'
 import styles from './index.module.scss'
@@ -54,6 +54,7 @@ const InspectionPage = () => {
   const alerts = useAppStore(state => state.alerts)
   const getInspectionRecord = useAppStore(state => state.getInspectionRecord)
   const addInspectionRecord = useAppStore(state => state.addInspectionRecord)
+  const updateServiceStatus = useAppStore(state => state.updateServiceStatus)
   const addMessage = useAppStore(state => state.addMessage)
 
   useEffect(() => {
@@ -132,6 +133,7 @@ const InspectionPage = () => {
     const passCount = checkItems.filter(i => i.result === 'pass').length
     const failCount = checkItems.filter(i => i.result === 'fail').length
 
+    const submitTime = dayjs().format('YYYY-MM-DD HH:mm')
     const record: InspectionRecord = {
       orderId,
       orderNo,
@@ -146,10 +148,12 @@ const InspectionPage = () => {
         isKeyCheck: item.isKeyCheck
       })),
       overallRemark,
-      submitTime: dayjs().format('YYYY-MM-DD HH:mm'),
+      submitTime,
       submitter: '收货员',
       failCount,
-      passCount
+      passCount,
+      serviceStatus: 'pending',
+      serviceTimeline: [{ status: 'pending', time: submitTime, operator: '系统', remark: '检查单提交，等待客服确认' }]
     }
 
     addInspectionRecord(record)
@@ -182,6 +186,23 @@ const InspectionPage = () => {
     if (hasSevereAlert) return styles.orderInfoSevere
     if (hasWarningAlert) return styles.orderInfoWarning
     return ''
+  }
+
+  const serviceStatusLabel: Record<ServiceStatus, string> = {
+    pending: '待跟进',
+    confirmed: '已确认',
+    exchanged: '已换货',
+    rejected: '已拒收'
+  }
+
+  const handleUpdateStatus = (status: ServiceStatus, remark: string) => {
+    if (!orderId) return
+    updateServiceStatus(orderId, status, remark)
+    const record = getInspectionRecord(orderId)
+    if (record) {
+      setExistingRecord(record)
+    }
+    Taro.showToast({ title: `状态已更新为${serviceStatusLabel[status]}`, icon: 'none' })
   }
 
   const getKeyCheckTip = () => {
@@ -265,6 +286,73 @@ const InspectionPage = () => {
             <View className={styles.historySubmitInfo}>
               <Text>提交人：{existingRecord.submitter}</Text>
               <Text>客服跟进中</Text>
+            </View>
+          </View>
+
+          <View className={styles.serviceCard}>
+            <Text className={styles.historyTitle}>客服处理进度</Text>
+            <Text
+              className={classnames(
+                styles.serviceStatusBadge,
+                existingRecord.serviceStatus === 'pending' && styles.statusPending,
+                existingRecord.serviceStatus === 'confirmed' && styles.statusConfirmed,
+                existingRecord.serviceStatus === 'exchanged' && styles.statusExchanged,
+                existingRecord.serviceStatus === 'rejected' && styles.statusRejected
+              )}
+            >
+              {serviceStatusLabel[existingRecord.serviceStatus]}
+            </Text>
+
+            <View className={styles.serviceTimeline}>
+              {existingRecord.serviceTimeline.map((entry, idx) => (
+                <View key={idx} className={styles.serviceEntry}>
+                  <View className={styles.serviceEntryDot} />
+                  <View className={styles.serviceEntryContent}>
+                    <Text className={styles.historyItemLabel}>
+                      {serviceStatusLabel[entry.status]}
+                    </Text>
+                    <Text className={styles.serviceEntryTime}>
+                      {entry.time} · {entry.operator}
+                    </Text>
+                    {entry.remark && (
+                      <Text className={styles.serviceEntryRemark}>{entry.remark}</Text>
+                    )}
+                  </View>
+                </View>
+              ))}
+            </View>
+
+            <View className={styles.serviceActions}>
+              {existingRecord.serviceStatus === 'pending' && (
+                <>
+                  <Text
+                    className={classnames(styles.btnService, styles.statusConfirmed)}
+                    onClick={() => handleUpdateStatus('confirmed', '确认收货，商品正常入库')}
+                  >
+                    确认收货
+                  </Text>
+                  <Text
+                    className={classnames(styles.btnService, styles.statusRejected)}
+                    onClick={() => handleUpdateStatus('rejected', '拒收商品，质量不合格')}
+                  >
+                    拒收
+                  </Text>
+                </>
+              )}
+              {existingRecord.serviceStatus === 'confirmed' && (
+                <Text className={styles.serviceStatusLabel}>已处理完成</Text>
+              )}
+              {existingRecord.serviceStatus === 'exchanged' && (
+                <Text
+                  className={classnames(styles.btnService, styles.statusExchanged)}
+                  onClick={() => handleUpdateStatus('confirmed', '换货到仓，确认入库')}
+                >
+                  确认换货到仓
+                </Text>
+              )}
+              {existingRecord.serviceStatus === 'rejected' && (
+                <Text className={styles.serviceStatusLabel}>已处理完成</Text>
+              )}
             </View>
           </View>
         </ScrollView>

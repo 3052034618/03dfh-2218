@@ -4,6 +4,25 @@ export type TempZone = 'frozen' | 'chilled' | 'ambient'
 
 export type AlertLevel = 'normal' | 'warning' | 'severe'
 
+export type ServiceStatus = 'pending' | 'confirmed' | 'exchanged' | 'rejected'
+
+export interface ServiceTimelineEntry {
+  status: ServiceStatus
+  time: string
+  operator: string
+  remark: string
+}
+
+export interface DispositionRecord {
+  id: string
+  alertId: string
+  orderId: string
+  type: 'spotCheck' | 'remark' | 'statusChange' | 'inspection'
+  content: string
+  operator: string
+  time: string
+}
+
 export interface OrderItem {
   id: string
   orderNo: string
@@ -48,6 +67,7 @@ export interface AlertItem {
   recommendedActions: RiskAction[]
   triggerThreshold: string
   tempOffset: string
+  dispositionRecords: DispositionRecord[]
 }
 
 export interface RiskActionConfig {
@@ -94,4 +114,6 @@ export interface InspectionRecord {
   submitter: string
   failCount: number
   passCount: number
+  serviceStatus: ServiceStatus
+  serviceTimeline: ServiceTimelineEntry[]
 }

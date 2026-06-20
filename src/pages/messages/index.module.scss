@@ -58,103 +58,197 @@
   padding: 0 $page-padding;
 }
 
-.messageCard {
+.orderGroup {
   background-color: $color-bg-card;
   border-radius: $radius-md;
-  padding: $spacing-lg;
   margin-bottom: $spacing-md;
   box-shadow: $shadow-card;
+  overflow: hidden;
+}
+
+.orderGroupHeader {
   display: flex;
-  gap: $spacing-md;
-  transition: all $transition-base;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-lg;
+  transition: background-color $transition-base;
 
   &:active {
-    opacity: 0.95;
+    background-color: $color-bg-hover;
   }
 }
 
-.messageIcon {
-  width: 72rpx;
-  height: 72rpx;
-  border-radius: $radius-md;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  font-size: 36rpx;
-}
-
-.iconAlert {
-  background-color: rgba(245, 63, 63, 0.1);
-}
-
-.iconArrival {
-  background-color: rgba(15, 198, 194, 0.1);
-}
-
-.iconSystem {
-  background-color: rgba(22, 93, 255, 0.1);
-}
-
-.messageContent {
+.orderInfo {
   flex: 1;
   overflow: hidden;
 }
 
-.messageHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: $spacing-xs;
-}
-
-.messageTitle {
+.orderNo {
   font-size: $font-size-md;
   color: $color-text-primary;
-  font-weight: $font-weight-semibold;
+  font-weight: $font-weight-bold;
+  display: block;
   @include text-ellipsis;
-  max-width: 400rpx;
 }
 
-.messageTime {
+.orderProduct {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  display: block;
+  margin-top: 4rpx;
+  @include text-ellipsis;
+}
+
+.orderMeta {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  flex-shrink: 0;
+  margin-left: $spacing-sm;
+}
+
+.orderTime {
   font-size: $font-size-xs;
   color: $color-text-tertiary;
   white-space: nowrap;
-  flex-shrink: 0;
 }
 
-.messageBody {
+.orderBadge {
+  font-size: $font-size-xs;
+  color: $color-text-white;
+  background-color: $color-error;
+  border-radius: $radius-round;
+  min-width: 32rpx;
+  height: 32rpx;
+  line-height: 32rpx;
+  text-align: center;
+  padding: 0 8rpx;
+  white-space: nowrap;
+}
+
+.expandArrow {
   font-size: $font-size-sm;
-  color: $color-text-secondary;
-  line-height: $line-height-normal;
-  @include text-ellipsis-multi(2);
+  color: $color-text-tertiary;
+  transition: transform $transition-base;
+  display: inline-block;
 }
 
-.messageFooter {
+.expandArrowOpen {
+  transform: rotate(90deg);
+}
+
+.orderTimeline {
+  padding: 0 $spacing-lg $spacing-lg;
+  border-top: 1rpx solid $color-divider;
+  margin-top: 0;
+  padding-top: $spacing-md;
+}
+
+.timelineItem {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-sm 0;
+  position: relative;
+
+  &:not(:last-child) {
+    padding-bottom: $spacing-md;
+  }
+
+  &:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 11rpx;
+    top: 40rpx;
+    bottom: 0;
+    width: 2rpx;
+    background-color: $color-divider;
+  }
+}
+
+.timelineDot {
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 6rpx;
+}
+
+.dotAlert {
+  background-color: rgba(245, 63, 63, 0.2);
+  border: 3rpx solid $color-error;
+}
+
+.dotArrival {
+  background-color: rgba(15, 198, 194, 0.2);
+  border: 3rpx solid $color-primary;
+}
+
+.dotSystem {
+  background-color: rgba(22, 93, 255, 0.2);
+  border: 3rpx solid $color-info;
+}
+
+.timelineContent {
+  flex: 1;
+  overflow: hidden;
+}
+
+.timelineTop {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: $spacing-sm;
+  margin-bottom: 4rpx;
 }
 
-.messageDate {
+.timelineType {
+  font-size: $font-size-xs;
+  border-radius: $radius-xs;
+  padding: 2rpx 12rpx;
+  white-space: nowrap;
+}
+
+.tagAlert {
+  color: $color-error;
+  background-color: rgba(245, 63, 63, 0.1);
+}
+
+.tagArrival {
+  color: $color-primary;
+  background-color: rgba(15, 198, 194, 0.1);
+}
+
+.tagSystem {
+  color: $color-info;
+  background-color: rgba(22, 93, 255, 0.1);
+}
+
+.timelineTime {
   font-size: $font-size-xs;
   color: $color-text-tertiary;
+  white-space: nowrap;
 }
 
-.actionText {
+.timelineTitle {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.timelineText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-normal;
+  display: block;
+  margin-bottom: $spacing-sm;
+}
+
+.timelineAction {
   font-size: $font-size-sm;
   color: $color-primary;
   font-weight: $font-weight-medium;
-}
-
-.unreadDot {
-  width: 16rpx;
-  height: 16rpx;
-  border-radius: 50%;
-  background-color: $color-error;
-  margin-top: 8rpx;
-  flex-shrink: 0;
+  display: inline-block;
 }
 
 .emptyState {

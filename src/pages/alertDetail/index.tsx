@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { View, Text, ScrollView } from '@tarojs/components'
 import Taro, { useRouter } from '@tarojs/taro'
 import { useAppStore } from '@/store'
-import { AlertLevel, RiskAction, RiskActionConfig } from '@/types/order'
+import { AlertLevel, RiskAction, RiskActionConfig, DispositionRecord } from '@/types/order'
 import classnames from 'classnames'
 import styles from './index.module.scss'
 
@@ -43,10 +43,18 @@ const riskActionConfigs: RiskActionConfig[] = [
   }
 ]
 
+const dispositionTypeIconMap: Record<DispositionRecord['type'], string> = {
+  spotCheck: '🔍',
+  remark: '📝',
+  statusChange: '🔄',
+  inspection: '📋'
+}
+
 const AlertDetailPage = () => {
   const router = useRouter()
   const alerts = useAppStore(state => state.alerts)
   const markAlertAsRead = useAppStore(state => state.markAlertAsRead)
+  const addDispositionRecord = useAppStore(state => state.addDispositionRecord)
   const [alert, setAlert] = useState(alerts[0])
 
   useEffect(() => {
@@ -88,6 +96,32 @@ const AlertDetailPage = () => {
 
   const handleOpenInspection = () => {
     Taro.navigateTo({ url: `/pages/inspection/index?id=${alert.orderId}` })
+  }
+
+  const handleAddRemark = () => {
+    Taro.showModal({
+      title: '添加备注',
+      editable: true,
+      placeholderText: '请输入备注内容',
+      success: (res) => {
+        if (res.confirm && res.content) {
+          addDispositionRecord(alert.id, {
+            alertId: alert.id,
+            orderId: alert.orderId,
+            type: 'remark',
+            content: res.content,
+            operator: '当前用户',
+            time: new Date().toLocaleString('zh-CN', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit'
+            }).replace(/\//g, '-')
+          })
+        }
+      }
+    })
   }
 
   return (
@@ -203,6 +237,31 @@ const AlertDetailPage = () => {
               </View>
             ))}
           </View>
+
+          <View className={styles.dispositionSection}>
+            <Text className={styles.dispositionTitle}>处置记录</Text>
+            {alert.dispositionRecords && alert.dispositionRecords.length > 0 ? (
+              <View className={styles.timeline}>
+                {alert.dispositionRecords.map(record => (
+                  <View key={record.id} className={styles.timelineItem}>
+                    <View className={styles.timelineDot} />
+                    <View className={styles.timelineContent}>
+                      <View className={styles.timelineHeader}>
+                        <Text className={styles.timelineTime}>{record.time}</Text>
+                        <Text className={styles.timelineOperator}>{record.operator}</Text>
+                      </View>
+                      <Text className={styles.timelineBody}>
+                        {dispositionTypeIconMap[record.type]} {record.content}
+                      </Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            ) : (
+              <Text className={styles.dispositionEmpty}>暂无处置记录，提交检查单或备注后将自动记录</Text>
+            )}
+            <Text className={styles.btnAddRemark} onClick={handleAddRemark}>添加备注</Text>
+          </View>
         </View>
       </ScrollView>
 
@@ -217,7 +276,7 @@ const AlertDetailPage = () => {
           className={styles.btnSecondary}
           onClick={handleOpenInspection}
         >
-          填写检查单
+          填写检查单{alert.dispositionRecords && alert.dispositionRecords.length > 0 ? `(${alert.dispositionRecords.length})` : ''}
         </Text>
       </View>
     </View>
